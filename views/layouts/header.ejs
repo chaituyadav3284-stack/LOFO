@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOFO - Lost & Found Portal</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <a href="/" class="logo">
+                    <i class="fa-solid fa-compass-drafting"></i>
+                    LOFO
+                </a>
+                
+                <!-- Pure CSS Menu Toggler -->
+                <input type="checkbox" id="menu-btn" class="menu-btn">
+                <label for="menu-btn" class="menu-icon">
+                    <i class="fa-solid fa-bars"></i>
+                </label>
+                
+                <ul class="nav-links">
+                    <li><a href="/" class="<%= path === '/' ? 'active' : '' %>">Home</a></li>
+                    <li><a href="/browse" class="<%= path === '/browse' ? 'active' : '' %>">Browse</a></li>
+                    
+                    <% if (user) { %>
+                        <li><a href="/dashboard" class="<%= path === '/dashboard' ? 'active' : '' %>">Dashboard</a></li>
+                        <li><a href="/profile" class="<%= path === '/profile' ? 'active' : '' %>">My Profile</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                        <li><a href="/report?type=lost" class="btn btn-primary btn-sm" style="color:white !important; border-radius:4px;">Report Lost</a></li>
+                        <li><a href="/report?type=found" class="btn btn-secondary btn-sm" style="border-radius:4px; border-color:var(--primary); color:var(--primary) !important;">Report Found</a></li>
+                    <% } else if (admin) { %>
+                        <li><a href="/admin-dashboard.php" class="active">Admin Portal</a></li>
+                        <li><a href="/admin-logout.php">Logout</a></li>
+                    <% } else { %>
+                        <li><a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a></li>
+                        <li><a href="/admin-login.php" class="<%= path === '/admin-login.php' ? 'active' : '' %>">Admin</a></li>
+                        <li><a href="/register" class="<%= path === '/register' ? 'active' : '' %>">Register</a></li>
+                        <li><a href="/contact" class="<%= path === '/contact' ? 'active' : '' %>">Contact</a></li>
+                        <li><a href="/report?type=lost" class="btn btn-primary btn-sm" style="color:white !important; border-radius:4px;">Report Lost</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </header>
+

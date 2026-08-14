@@ -1,0 +1,86 @@
+<%- include('layouts/header') %>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>LOST IT? FIND IT?</h1>
+            <p>Welcome to LOFO, the official campus portal to report lost items and search through found belongings.</p>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <a href="/report?type=lost" class="btn btn-primary"><i class="fa-solid fa-circle-question"></i> Report Lost Item</a>
+                <a href="/report?type=found" class="btn btn-secondary" style="border-color: var(--primary); color: var(--primary);"><i class="fa-solid fa-circle-check"></i> Report Found Item</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <div class="container" style="margin-top: -60px; position: relative; z-index: 10;">
+        <div class="search-container" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+            <form action="/browse" method="GET" class="search-form">
+                <input type="text" name="search" class="form-control" placeholder="Search item keywords (e.g. key, red bag)...">
+                
+                <select name="status" class="form-control">
+                    <option value="">All Statuses</option>
+                    <option value="lost">Lost Only</option>
+                    <option value="found">Found Only</option>
+                </select>
+                
+                <input type="text" name="location" class="form-control" placeholder="Search by location...">
+                
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recent Listings Section -->
+    <section class="container" style="padding: 40px 0 60px;">
+        <h2 class="section-title">Recently Reported Items</h2>
+        
+        <% if (dbOffline) { %>
+            <div class="alert alert-warning" style="padding: 30px; text-align: center; flex-direction: column;">
+                <i class="fa-solid fa-database" style="font-size: 3rem; color: var(--warning); margin-bottom: 10px;"></i>
+                <h4 style="font-size: 1.2rem;">Database Offline Mode</h4>
+                <p style="margin-top: 5px; color: var(--text-muted);">
+                    The local database is currently offline or unconfigured. You can run the application, edit files, and test views. Configure your MySQL credentials in `.env` to load live items!
+                </p>
+            </div>
+        <% } else if (items.length > 0) { %>
+            <div class="item-grid">
+                <% items.forEach(item => { %>
+                    <div class="item-card">
+                        <div class="item-img-container">
+                            <% if (item.image_url) { %>
+                                <img src="<%= item.image_url %>" alt="<%= item.item_name %>">
+                            <% } else { %>
+                                <div class="item-placeholder">
+                                    <i class="fa-solid <%= item.status === 'lost' ? 'fa-circle-question' : 'fa-circle-check' %>"></i>
+                                    <span>No Image Uploaded</span>
+                                </div>
+                            <% } %>
+                            <span class="status-badge <%= item.status %>"><%= item.status %></span>
+                        </div>
+                        <div class="item-info">
+                            <span class="item-category"><%= item.category_name %></span>
+                            <h3 class="item-title"><%= item.item_name %></h3>
+                            <ul class="item-details-list">
+                                <li><i class="fa-solid fa-location-dot"></i> <%= item.location %></li>
+                                <li><i class="fa-solid fa-calendar-days"></i> <%= new Date(item.date_reported).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></li>
+                            </ul>
+                            <a href="/details/<%= item.id %>" class="btn btn-secondary btn-sm item-card-btn" style="margin-top: auto;">View Details</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/browse" class="btn btn-secondary"><i class="fa-solid fa-list-ul"></i> Browse All Reported Items</a>
+            </div>
+        <% } else { %>
+            <div style="text-align: center; padding: 50px 0; color: var(--text-muted); border: 1px dashed var(--border); border-radius: var(--radius); background-color: var(--surface);">
+                <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i>
+                <p>No listings registered yet. Be the first to file a report!</p>
+            </div>
+        <% } %>
+    </section>
+
+<%- include('layouts/footer') %>
+

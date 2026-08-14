@@ -1,0 +1,80 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; padding: 40px 0;">
+        <h1 class="section-title">Browse Reported Items</h1>
+
+        <!-- Filter Panel -->
+        <div class="search-container">
+            <form action="/browse" method="GET" class="search-form">
+                <input type="text" name="search" class="form-control" placeholder="Search keywords..." value="<%= search %>">
+                
+                <select name="category" class="form-control">
+                    <option value="">All Categories</option>
+                    <% categories.forEach(cat => { %>
+                        <option value="<%= cat.id %>" <%= category == cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                    <% }); %>
+                </select>
+
+                <input type="text" name="location" class="form-control" placeholder="Location..." value="<%= location %>">
+                
+                <select name="status" class="form-control">
+                    <option value="">All Statuses</option>
+                    <option value="lost" <%= status === 'lost' ? 'selected' : '' %>>Lost Only</option>
+                    <option value="found" <%= status === 'found' ? 'selected' : '' %>>Found Only</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Apply Filters</button>
+            </form>
+            
+            <% if (search || category || location || status) { %>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="/browse" style="font-size: 0.85rem; color: var(--danger); text-decoration: none; font-weight: 600;"><i class="fa-solid fa-rotate-left"></i> Reset Filters</a>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (dbOffline) { %>
+            <div class="alert alert-warning">
+                <i class="fa-solid fa-database"></i>
+                <span>Database offline. Unable to query items.</span>
+            </div>
+        <% } else if (items.length > 0) { %>
+            <!-- Grid list of results -->
+            <div class="item-grid">
+                <% items.forEach(item => { %>
+                    <div class="item-card">
+                        <div class="item-img-container">
+                            <% if (item.image_url) { %>
+                                <img src="<%= item.image_url %>" alt="<%= item.item_name %>">
+                            <% } else { %>
+                                <div class="item-placeholder">
+                                    <i class="fa-solid <%= item.status === 'lost' ? 'fa-circle-question' : 'fa-circle-check' %>"></i>
+                                    <span>No Image</span>
+                                </div>
+                            <% } %>
+                            <span class="status-badge <%= item.status %>"><%= item.status %></span>
+                        </div>
+                        <div class="item-info">
+                            <span class="item-category"><%= item.category_name %></span>
+                            <h3 class="item-title"><%= item.item_name %></h3>
+                            <ul class="item-details-list">
+                                <li><i class="fa-solid fa-location-dot"></i> <%= item.location %></li>
+                                <li><i class="fa-solid fa-calendar"></i> <%= new Date(item.date_reported).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></li>
+                            </ul>
+                            <a href="/details/<%= item.id %>" class="btn btn-secondary btn-sm item-card-btn" style="margin-top: auto;">View Details</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div style="text-align: center; padding: 60px 0; background-color: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);">
+                <i class="fa-solid fa-folder-open" style="font-size: 3.5rem; color: var(--text-muted); opacity: 0.4; margin-bottom: 15px;"></i>
+                <h3>No Listings Found</h3>
+                <p style="color: var(--text-muted); margin-top: 5px;">No reported items matched your filter selections.</p>
+                <a href="/browse" class="btn btn-primary btn-sm" style="margin-top: 15px;">Clear Filters</a>
+            </div>
+        <% } %>
+    </div>
+
+<%- include('layouts/footer') %>
+

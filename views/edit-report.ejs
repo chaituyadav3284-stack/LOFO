@@ -1,0 +1,57 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; padding: 40px 0;">
+        <div class="form-card" style="max-width: 650px; margin: 0 auto;">
+            
+            <h2 class="form-title" style="color: var(--primary);">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Edit Item Report
+            </h2>
+            
+            <form action="/edit/<%= report.id %>" method="POST">
+                <div class="form-group">
+                    <label for="item_name">Item Name</label>
+                    <input type="text" name="item_name" id="item_name" class="form-control" value="<%= report.item_name %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category_id">Category</label>
+                    <select name="category_id" id="category_id" class="form-control" required>
+                        <% categories.forEach(cat => { %>
+                            <option value="<%= cat.id %>" <%= report.category_id === cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Detailed Description</label>
+                    <textarea name="description" id="description" class="form-control" required><%= report.description %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" name="location" id="location" class="form-control" value="<%= report.location %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_reported">Date Reported</label>
+                    <input type="date" name="date_reported" id="date_reported" class="form-control" value="<%= new Date(report.date_reported).toISOString().split('T')[0] %>" max="<%= new Date().toISOString().split('T')[0] %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact_number">Contact Phone Number</label>
+                    <input type="tel" name="contact_number" id="contact_number" class="form-control" value="<%= report.contact_number %>" pattern="[0-9+ ]{10,15}" required>
+                </div>
+
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;"><i class="fa-solid fa-circle-info"></i> Note: Editing this listing will reset its approval status. An admin must re-approve the report before it goes live again.</p>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+                    <a href="/dashboard" class="btn btn-secondary" style="flex: 1; text-align: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<%- include('layouts/footer') %>
+

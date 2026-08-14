@@ -1,0 +1,18 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 50px 0;">
+        <div class="form-card" style="text-align: center; max-width: 500px; border-top: 4px solid var(--danger);">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 4rem; color: var(--danger); margin-bottom: 20px;"></i>
+            
+            <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-dark); margin-bottom: 10px;">Operation Failed</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;"><%= typeof message !== 'undefined' ? message : 'An unexpected server exception occurred.' %></p>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="window.history.back();" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Go Back</button>
+                <a href="/" class="btn btn-primary"><i class="fa-solid fa-house"></i> Home</a>
+            </div>
+        </div>
+    </div>
+
+<%- include('layouts/footer') %>
+

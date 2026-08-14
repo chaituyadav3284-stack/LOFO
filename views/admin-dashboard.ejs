@@ -1,0 +1,173 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; padding: 40px 0;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h1 style="color: var(--text-dark);"><i class="fa-solid fa-screwdriver-wrench"></i> Administrative Panel</h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Review reported items, delete spam listings, and manage student accounts.</p>
+            </div>
+            <div style="font-weight: 600; color: var(--text-muted);">
+                Logged in as: <span style="color: var(--primary);"><%= admin.username %></span>
+            </div>
+        </div>
+
+        <!-- Alert messages -->
+        <% if (success) { %>
+            <div class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>
+                    <% if (success === 'approved') { %> Listing approved and published live successfully. <% } %>
+                    <% if (success === 'deleted') { %> Listing removed permanently. <% } %>
+                </span>
+            </div>
+        <% } %>
+        
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Action execution failed. Please verify database connection.</span>
+            </div>
+        <% } %>
+
+        <% if (dbOffline) { %>
+            <div class="alert alert-warning" style="padding: 25px; text-align: center; flex-direction: column;">
+                <i class="fa-solid fa-database" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
+                <h4>Admin DB Connection Offline</h4>
+                <p style="margin-top: 5px; color: var(--text-muted); font-size: 0.9rem;">
+                    The system database is offline. Set up your MySQL database with schema rules to start reviewing student reports.
+                </p>
+            </div>
+        <% } else { %>
+
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card" style="border-left-color: var(--primary);">
+                    <div class="stat-info">
+                        <h3>Total Submissions</h3>
+                        <p><%= totalReports %></p>
+                    </div>
+                    <div class="stat-icon"><i class="fa-solid fa-folder-tree"></i></div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--warning);">
+                    <div class="stat-info">
+                        <h3>Pending Validation</h3>
+                        <p><%= pendingCount %></p>
+                    </div>
+                    <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--success);">
+                    <div class="stat-info">
+                        <h3>Registered Users</h3>
+                        <p><%= totalUsers %></p>
+                    </div>
+                    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                </div>
+            </div>
+
+            <!-- Item Reports List -->
+            <h2 class="section-title"><i class="fa-solid fa-list-check"></i> Item Verification Queue</h2>
+            
+            <% if (allReports.length > 0) { %>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thumbnail</th>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Reporter Details</th>
+                                <th>Approvals</th>
+                                <th>Action Control</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% allReports.forEach(report => { %>
+                                <tr>
+                                    <td>
+                                        <% if (report.image_url) { %>
+                                            <img src="<%= report.image_url %>" alt="report" style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);">
+                                        <% } else { %>
+                                            <div style="width: 45px; height: 45px; background-color:#e2e8f0; display:flex; justify-content:center; align-items:center; border-radius:4px; font-size:0.65rem; color:var(--text-muted); font-weight:600;">No Img</div>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <strong><a href="/details/<%= report.id %>" style="color:var(--text-dark); text-decoration:none;"><%= report.item_name %></a></strong><br>
+                                        <span style="font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-location-dot"></i> <%= report.location %></span>
+                                    </td>
+                                    <td><%= report.category_name %></td>
+                                    <td><span class="status-badge <%= report.status %>" style="position:static; padding: 2px 8px; font-size:0.7rem;"><%= report.status %></span></td>
+                                    <td>
+                                        <%= report.reporter_name %><br>
+                                        <span style="font-size:0.75rem; color:var(--text-muted);"><%= report.reporter_email %></span>
+                                    </td>
+                                    <td>
+                                        <% if (report.is_approved) { %>
+                                            <span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Approved & Live</span>
+                                        <% } else { %>
+                                            <span style="color: var(--warning); font-weight: 600;"><i class="fa-solid fa-circle-exclamation"></i> Pending review</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px;">
+                                            <% if (!report.is_approved) { %>
+                                                <form action="/admin/approve/<%= report.id %>" method="POST" style="display: inline;">
+                                                    <button type="submit" class="btn btn-primary btn-sm" style="background-color: var(--success); border-color: var(--success);">
+                                                        <i class="fa-solid fa-check"></i> Approve
+                                                    </button>
+                                                </form>
+                                            <% } %>
+                                            <form action="/admin/delete/<%= report.id %>" method="POST" style="display: inline;">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this listing permanently?');">
+                                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <p style="padding: 20px; background: white; text-align: center; border-radius: var(--radius); border: 1px solid var(--border); color: var(--text-muted); margin-bottom: 40px;">No reported items inside system database.</p>
+            <% } %>
+
+            <!-- Users List -->
+            <h2 class="section-title" style="margin-top: 50px;"><i class="fa-solid fa-users-gear"></i> Registered Students</h2>
+            
+            <% if (allUsers.length > 0) { %>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Full Name</th>
+                                <th>Email Address</th>
+                                <th>Contact Number</th>
+                                <th>Date Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% allUsers.forEach(usr => { %>
+                                <tr>
+                                    <td>#<%= usr.id %></td>
+                                    <td><strong><%= usr.name %></strong></td>
+                                    <td><%= usr.email %></td>
+                                    <td><%= usr.phone %></td>
+                                    <td><%= new Date(usr.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <p style="padding: 20px; background: white; text-align: center; border-radius: var(--radius); border: 1px solid var(--border); color: var(--text-muted); margin-bottom: 40px;">No registered student accounts in database.</p>
+            <% } %>
+
+        <% } %>
+    </div>
+
+<%- include('layouts/footer') %>
+

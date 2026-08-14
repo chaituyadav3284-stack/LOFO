@@ -1,0 +1,26 @@
+﻿{
+  "name": "lofo",
+  "version": "1.0.0",
+  "description": "LOFO - College Project Lost & Found Web Portal",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "node api/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "College Student",
+  "license": "ISC"
+}
+

@@ -1,0 +1,149 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; padding-top: 30px; padding-bottom: 60px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h1 style="color: var(--text-dark);">Welcome back, <%= user.name %>!</h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Manage your reported items and view similar matching results.</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="/report?type=lost" class="btn btn-primary btn-sm"><i class="fa-solid fa-circle-question"></i> Report Lost</a>
+                <a href="/report?type=found" class="btn btn-secondary btn-sm" style="color: var(--primary); border-color: var(--primary);"><i class="fa-solid fa-circle-check"></i> Report Found</a>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <% if (success) { %>
+            <div class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>
+                    <% if (success === 'report_updated') { %> Report updated successfully and is queued for admin approval. <% } %>
+                    <% if (success === 'report_resolved') { %> Item status updated to resolved! <% } %>
+                    <% if (success === 'report_deleted') { %> Report deleted successfully. <% } %>
+                </span>
+            </div>
+        <% } %>
+        
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>An error occurred while executing that operation.</span>
+            </div>
+        <% } %>
+
+        <% if (dbOffline) { %>
+            <div class="alert alert-warning" style="padding: 25px; text-align: center; flex-direction: column;">
+                <i class="fa-solid fa-database" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
+                <h4>Database Connection Unavailable</h4>
+                <p style="margin-top: 5px; color: var(--text-muted); font-size: 0.9rem;">
+                    MySQL is currently offline. Seeding default tables and connecting to your database enables personal report tracking.
+                </p>
+            </div>
+        <% } else { %>
+            
+            <!-- Summary Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card lost">
+                    <div class="stat-info">
+                        <h3>Active Lost Reports</h3>
+                        <p><%= lostCount %></p>
+                    </div>
+                    <div class="stat-icon"><i class="fa-solid fa-circle-question"></i></div>
+                </div>
+                <div class="stat-card found">
+                    <div class="stat-info">
+                        <h3>Active Found Reports</h3>
+                        <p><%= foundCount %></p>
+                    </div>
+                    <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--success);">
+                    <div class="stat-info">
+                        <h3>Resolved Items</h3>
+                        <p><%= resolvedCount %></p>
+                    </div>
+                    <div class="stat-icon"><i class="fa-solid fa-handshake"></i></div>
+                </div>
+            </div>
+
+            <!-- Table of Reports -->
+            <h2 class="section-title">Your Item Reports</h2>
+            
+            <% if (reports.length > 0) { %>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Date Reported</th>
+                                <th>Visibility</th>
+                                <th>Status</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% reports.forEach(report => { %>
+                                <tr>
+                                    <td>
+                                        <% if (report.image_url) { %>
+                                            <img src="<%= report.image_url %>" alt="item" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);">
+                                        <% } else { %>
+                                            <div style="width: 50px; height: 50px; background-color:#e2e8f0; display:flex; justify-content:center; align-items:center; border-radius:4px; font-size:0.7rem; color:var(--text-muted); font-weight:600;">No Img</div>
+                                        <% } %>
+                                    </td>
+                                    <td><strong><a href="/details/<%= report.id %>" style="color:var(--text-dark); text-decoration:none;"><%= report.item_name %></a></strong></td>
+                                    <td><%= report.category_name %></td>
+                                    <td><span class="status-badge <%= report.status %>" style="position:static; padding: 2px 8px; font-size: 0.7rem;"><%= report.status %></span></td>
+                                    <td><%= new Date(report.date_reported).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                    <td>
+                                        <% if (report.is_approved) { %>
+                                            <span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-eye"></i> Live</span>
+                                        <% } else { %>
+                                            <span style="color: var(--warning); font-weight: 600;"><i class="fa-solid fa-eye-slash"></i> Review Pending</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (report.is_resolved) { %>
+                                            <span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Resolved</span>
+                                        <% } else { %>
+                                            <span style="color: var(--danger); font-weight: 600;"><i class="fa-solid fa-clock"></i> Active</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                            <% if (!report.is_resolved) { %>
+                                                <form action="/resolve/<%= report.id %>" method="POST" style="display: inline;">
+                                                    <button type="submit" class="btn btn-secondary btn-sm" style="color: var(--success); border-color: var(--success);" onclick="return confirm('Mark this item as resolved/returned?');">
+                                                        <i class="fa-solid fa-check"></i> Resolve
+                                                    </button>
+                                                </form>
+                                                <a href="/edit/<%= report.id %>" class="btn btn-secondary btn-sm" style="color: var(--primary); border-color: var(--primary);"><i class="fa-solid fa-pen"></i> Edit</a>
+                                            <% } %>
+                                            <form action="/delete/<%= report.id %>" method="POST" style="display: inline;">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this report permanently?');">
+                                                    <i class="fa-solid fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div style="text-align: center; padding: 50px 0; background-color: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);">
+                    <i class="fa-solid fa-clipboard-question" style="font-size: 3rem; color: var(--text-muted); opacity: 0.4; margin-bottom: 10px;"></i>
+                    <p style="color: var(--text-muted);">You have not filed any reports yet.</p>
+                </div>
+            <% } %>
+
+        <% } %>
+    </div>
+
+<%- include('layouts/footer') %>
+

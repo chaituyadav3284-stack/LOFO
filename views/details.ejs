@@ -1,0 +1,131 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; padding: 40px 0;">
+        
+        <!-- Breadcrumb links -->
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+            <a href="/" style="color: var(--text-muted); text-decoration: none;">Home</a> &gt; 
+            <a href="/browse" style="color: var(--text-muted); text-decoration: none;">Browse</a> &gt; 
+            <%= item.item_name %>
+        </p>
+
+        <% if (dbOffline) { %>
+            <div class="alert alert-warning">
+                <i class="fa-solid fa-database"></i>
+                <span>Database offline. Unable to view details.</span>
+            </div>
+        <% } else if (item) { %>
+            
+            <div class="details-container">
+                
+                <!-- Left: Large Image View -->
+                <div class="details-image">
+                    <% if (item.image_url) { %>
+                        <img src="<%= item.image_url %>" alt="<%= item.item_name %>">
+                    <% } else { %>
+                        <div style="text-align: center; color: var(--text-muted);">
+                            <i class="fa-solid <%= item.status === 'lost' ? 'fa-circle-question' : 'fa-circle-check' %>" style="font-size: 5rem; margin-bottom: 10px; opacity: 0.3;"></i>
+                            <p>No Image Uploaded</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Right: Details Content -->
+                <div class="details-content">
+                    
+                    <div style="margin-bottom: 15px;">
+                        <span class="status-badge <%= item.status %>" style="position: static; display: inline-block;">
+                            <%= item.status.toUpperCase() %>
+                        </span>
+                        <% if (item.is_resolved) { %>
+                            <span class="status-badge resolved" style="position: static; display: inline-block; margin-left: 8px;">
+                                Resolved
+                            </span>
+                        <% } %>
+                    </div>
+                    
+                    <h2 style="font-size: 2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 5px;"><%= item.item_name %></h2>
+                    <span style="font-size: 0.85rem; text-transform: uppercase; font-weight: 600; color: var(--primary); display: block; margin-bottom: 20px;">
+                        Category: <%= item.category_name %>
+                    </span>
+
+                    <table class="details-table">
+                        <tr>
+                            <td>Location</td>
+                            <td><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> <%= item.location %></td>
+                        </tr>
+                        <tr>
+                            <td>Date Reported</td>
+                            <td><i class="fa-solid fa-calendar-day" style="color: var(--primary);"></i> <%= new Date(item.date_reported).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></td>
+                        </tr>
+                        <tr>
+                            <td>Reporter</td>
+                            <td><i class="fa-solid fa-user-check" style="color: var(--primary);"></i> <%= item.reporter_name %></td>
+                        </tr>
+                    </table>
+
+                    <h4 style="font-weight: 600; margin-bottom: 8px; color: var(--text-dark);">Description:</h4>
+                    <p style="background: var(--surface); padding: 15px; border: 1px solid var(--border); border-radius: var(--radius); line-height: 1.5; color: #334155; font-size: 0.95rem; margin-bottom: 30px;">
+                        <%= item.description %>
+                    </p>
+
+                    <!-- Contact details container (locked/unlocked) -->
+                    <div class="contact-card">
+                        <% if (user) { %>
+                            <h4 style="color: var(--primary);"><i class="fa-solid fa-id-card"></i> Contact Information</h4>
+                            <p style="margin-top: 10px; font-size: 0.95rem;">
+                                <strong>Phone:</strong> <a href="tel:<%= item.contact_number %>" style="color: var(--text-dark); font-weight: 500;"><%= item.contact_number %></a>
+                            </p>
+                            <p style="margin-top: 5px; font-size: 0.95rem;">
+                                <strong>Email:</strong> <a href="mailto:<%= item.reporter_email %>" style="color: var(--primary); text-decoration: none;"><%= item.reporter_email %></a>
+                            </p>
+                        <% } else { %>
+                            <h4 style="color: var(--danger);"><i class="fa-solid fa-lock"></i> Contact Info Locked</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; margin-bottom: 15px;">
+                                To prevent spam and secure student details, you must be logged in to view the owner's phone number and email address.
+                            </p>
+                            <a href="/login?error=auth_required" class="btn btn-primary btn-sm"><i class="fa-solid fa-right-to-bracket"></i> Login to View Contacts</a>
+                        <% } %>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Similar Items Footer Recommendation -->
+            <% if (similarItems && similarItems.length > 0) { %>
+                <div style="margin-top: 60px; border-top: 1px solid var(--border); padding-top: 40px;">
+                    <h3 class="section-title">Similar Listings In Category</h3>
+                    <div class="item-grid">
+                        <% similarItems.forEach(related => { %>
+                            <div class="item-card">
+                                <div class="item-img-container">
+                                    <% if (related.image_url) { %>
+                                        <img src="<%= related.image_url %>" alt="related">
+                                    <% } else { %>
+                                        <div class="item-placeholder">
+                                            <i class="fa-solid <%= related.status === 'lost' ? 'fa-circle-question' : 'fa-circle-check' %>"></i>
+                                            <span>No Image</span>
+                                        </div>
+                                    <% } %>
+                                    <span class="status-badge <%= related.status %>"><%= related.status %></span>
+                                </div>
+                                <div class="item-info">
+                                    <span class="item-category"><%= related.category_name %></span>
+                                    <h3 class="item-title"><%= related.item_name %></h3>
+                                    <ul class="item-details-list">
+                                        <li><i class="fa-solid fa-location-dot"></i> <%= related.location %></li>
+                                        <li><i class="fa-solid fa-calendar"></i> <%= new Date(related.date_reported).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></li>
+                                    </ul>
+                                    <a href="/details/<%= related.id %>" class="btn btn-secondary btn-sm item-card-btn" style="margin-top: auto;">View Details</a>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+
+        <% } %>
+    </div>
+
+<%- include('layouts/footer') %>
+

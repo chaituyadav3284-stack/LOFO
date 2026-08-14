@@ -1,0 +1,99 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; padding: 40px 0;">
+        <div class="form-card" style="max-width: 650px; margin: 0 auto;">
+            
+            <h2 class="form-title" style="color: <%= type === 'lost' ? 'var(--danger)' : 'var(--primary)' %>;">
+                <i class="fa-solid <%= type === 'lost' ? 'fa-circle-question' : 'fa-circle-check' %>"></i>
+                Report <%= type.charAt(0).toUpperCase() + type.slice(1) %> Item
+            </h2>
+            
+            <% if (dbOffline) { %>
+                <div class="alert alert-warning">
+                    <i class="fa-solid fa-database"></i>
+                    <span>Database offline. Unable to submit reports.</span>
+                </div>
+            <% } else { %>
+                <form action="/report" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="status" value="<%= type %>">
+
+                    <div class="form-group">
+                        <label for="item_name">Item Name</label>
+                        <input type="text" name="item_name" id="item_name" class="form-control" placeholder="What was <%= type === 'lost' ? 'lost' : 'found' %>? (e.g. Red iPhone 13)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category_id">Category</label>
+                        <select name="category_id" id="category_id" class="form-control" required>
+                            <option value="" disabled selected>Select Category</option>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat.id %>"><%= cat.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Detailed Description</label>
+                        <textarea name="description" id="description" class="form-control" placeholder="Describe the item (brand, color, size, serial key or unique marks)" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" name="location" id="location" class="form-control" placeholder="Where was it <%= type === 'lost' ? 'lost' : 'found' %>? (e.g. Science block Room 302)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_reported">Date <%= type === 'lost' ? 'Lost' : 'Found' %></label>
+                        <input type="date" name="date_reported" id="date_reported" class="form-control" max="<%= new Date().toISOString().split('T')[0] %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Upload Image (Optional)</label>
+                        <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                        <div id="image-preview-container" class="image-preview" style="display: none;">
+                            <img id="image-preview" src="#" alt="Selected Image Preview">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_number">Contact Phone Number</label>
+                        <!-- Prefilled with session user phone -->
+                        <input type="tel" name="contact_number" id="contact_number" class="form-control" value="<%= user.phone %>" placeholder="Enter contact number" pattern="[0-9+ ]{10,15}" required>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-top: 25px;">
+                        <button type="submit" class="btn <%= type === 'lost' ? 'btn-danger' : 'btn-primary' %>" style="flex: 1;">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Report
+                        </button>
+                        <a href="/dashboard" class="btn btn-secondary" style="flex: 1; text-align: center;">Cancel</a>
+                    </div>
+                </form>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Image preview script (Vanilla JS) -->
+    <script>
+        const imageInput = document.getElementById('image');
+        const previewContainer = document.getElementById('image-preview-container');
+        const previewImg = document.getElementById('image-preview');
+        
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.setAttribute('src', e.target.result);
+                        previewContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    previewContainer.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
+<%- include('layouts/footer') %>
+

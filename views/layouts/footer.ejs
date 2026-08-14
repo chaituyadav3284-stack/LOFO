@@ -1,0 +1,49 @@
+﻿    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>LOFO Portal</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">
+                        A clean and secure student-built Lost & Found web platform to reconnect owners with their lost belongings on campus.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/browse">Browse Listings</a></li>
+                        <li><a href="/contact">Contact Page</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>User Account</h4>
+                    <ul class="footer-links">
+                        <% if (user) { %>
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/profile">Profile Settings</a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        <% } else { %>
+                            <li><a href="/login">User Login</a></li>
+                            <li><a href="/register">Create Account</a></li>
+                            <li><a href="/admin-login.php">Admin Portal</a></li>
+                        <% } %>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Campus Support</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">
+                        Support Desk Email:<br>
+                        <strong>support@lofo.edu</strong>
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LOFO. Built for College Project Viva. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
+

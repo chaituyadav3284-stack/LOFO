@@ -1,0 +1,78 @@
+﻿<%- include('layouts/header') %>
+
+    <div class="container" style="flex-grow: 1; padding: 40px 0; max-width: 800px;">
+        
+        <!-- Report success card -->
+        <div class="alert alert-success" style="padding: 20px; margin-bottom: 30px;">
+            <i class="fa-solid fa-circle-check" style="font-size: 1.8rem;"></i>
+            <div>
+                <h4 style="font-size: 1.15rem; font-weight: 700; margin: 0;">Report Registered Successfully!</h4>
+                <p style="font-size: 0.9rem; margin-top: 4px;">Your <%= status %> item report has been saved and queued for admin validation.</p>
+            </div>
+        </div>
+
+        <!-- AI Similarity Match Box -->
+        <div class="ai-matches-box" style="margin-bottom: 40px;">
+            <h3><i class="fa-solid fa-microchip"></i> System Automated Match Finder (AI Feature)</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                Our algorithm analyzed the details and color profile of your reported <strong><%= item_name %></strong> and checked against currently registered <strong><%= status === 'lost' ? 'found' : 'lost' %></strong> listings.
+            </p>
+
+            <% if (matches && matches.length > 0) { %>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <% matches.forEach(match => { %>
+                        <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; display: flex; align-items: center; gap: 20px; transition: border-color 0.2s;">
+                            <!-- Image thumbnail -->
+                            <div style="width: 75px; height: 75px; border-radius: 6px; overflow: hidden; background-color: #f1f5f9; flex-shrink: 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">
+                                <% if (match.image_url) { %>
+                                    <img src="<%= match.image_url %>" alt="match" style="width: 100%; height: 100%; object-fit: cover;">
+                                <% } else { %>
+                                    <i class="fa-solid <%= match.status === 'lost' ? 'fa-circle-question' : 'fa-circle-check' %>" style="font-size: 1.6rem; color: var(--text-muted);"></i>
+                                <% } %>
+                            </div>
+                            
+                            <!-- Content Details -->
+                            <div style="flex-grow: 1;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 0.7rem; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 2px 8px; border-radius: 12px; text-transform: uppercase;">
+                                        Match Score: <%= match.match_score %>%
+                                    </span>
+                                    <% if (match.average_color) { %>
+                                        <span style="font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px;">
+                                            <span style="display:inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: <%= match.average_color %>;"></span>
+                                            Color Signature
+                                        </span>
+                                    <% } %>
+                                </div>
+                                <h4 style="margin: 6px 0 2px; font-size: 1.05rem;"><a href="/details/<%= match.id %>" style="color: var(--text-dark); text-decoration: none; font-weight: 600;"><%= match.item_name %></a></h4>
+                                <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">
+                                    <i class="fa-solid fa-location-dot"></i> <%= match.location %> | 
+                                    <i class="fa-solid fa-calendar"></i> <%= new Date(match.date_reported).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                                </span>
+                            </div>
+                            
+                            <!-- Button Link -->
+                            <div>
+                                <a href="/details/<%= match.id %>" class="btn btn-secondary btn-sm" style="white-space: nowrap;">View Details</a>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div style="text-align: center; padding: 30px 0; color: var(--text-muted);">
+                    <i class="fa-solid fa-compass-drafting" style="font-size: 2.5rem; color: var(--text-muted); opacity: 0.4; margin-bottom: 10px;"></i>
+                    <p>No immediate matching listings found in the system right now. Your report will be automatically compared when new items are posted.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Next Actions -->
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <a href="/dashboard" class="btn btn-primary"><i class="fa-solid fa-chart-line"></i> Go to Dashboard</a>
+            <a href="/browse" class="btn btn-secondary"><i class="fa-solid fa-magnifying-glass"></i> Browse All Listings</a>
+        </div>
+
+    </div>
+
+<%- include('layouts/footer') %>
+
