@@ -1,22 +1,70 @@
 <%- include('layouts/header') %>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>LOST IT? FIND IT?</h1>
-            <p>Welcome to LOFO, the official campus portal to report lost items and search through found belongings.</p>
-            <div style="display: flex; justify-content: center; gap: 15px;">
-                <a href="/report?type=lost" class="btn btn-primary"><i class="fa-solid fa-circle-question"></i> Report Lost Item</a>
-                <a href="/report?type=found" class="btn btn-secondary" style="border-color: var(--primary); color: var(--primary);"><i class="fa-solid fa-circle-check"></i> Report Found Item</a>
+    <section class="hero" style="background: #f8fafc; border-bottom: 1px solid var(--border); padding: 50px 0 40px;">
+        <div class="container" style="text-align: center;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 8px;">Campus Safety Desk</span>
+            <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-dark); margin: 0 0 10px; letter-spacing: -0.5px;">LOST IT? FIND IT?</h1>
+            <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto 25px; line-height: 1.5;">
+                Welcome to LOFO, the official campus portal to report lost items and search through found belongings.
+            </p>
+        </div>
+    </section>
+
+    <!-- Separated Portals Grid -->
+    <section class="container" style="padding: 40px 0 20px;">
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 25px;">Select Portal Access</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; max-width: 900px; margin: 0 auto;">
+            
+            <!-- Student Portal Card -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: #dbeafe; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary);">
+                    <i class="fa-solid fa-graduation-cap" style="font-size: 1.5rem;"></i>
+                </div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin: 0 0 10px;">Student Portal</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 25px; flex-grow: 1;">
+                    Report lost items, check automated matching suggestions, and manage your active claims.
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <% if (user) { %>
+                        <a href="/dashboard" class="btn btn-primary" style="flex: 1; text-align: center; font-size: 0.85rem; padding: 10px 0;">Go to Dashboard</a>
+                    <% } else { %>
+                        <a href="/login" class="btn btn-primary" style="flex: 1; text-align: center; font-size: 0.85rem; padding: 10px 0;">Sign In</a>
+                        <a href="/register" class="btn btn-secondary" style="flex: 1; text-align: center; font-size: 0.85rem; padding: 10px 0; border-color: var(--border);">Register</a>
+                    <% } %>
+                </div>
             </div>
+
+            <!-- Admin Portal Card -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--danger);">
+                    <i class="fa-solid fa-user-shield" style="font-size: 1.4rem;"></i>
+                </div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin: 0 0 10px;">Admin Portal</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 25px; flex-grow: 1;">
+                    For campus administrators to review reported entries, delete false claims, and manage database registers.
+                </p>
+                <div>
+                    <% if (admin) { %>
+                        <a href="/admin-dashboard.php" class="btn btn-primary" style="width: 100%; text-align: center; font-size: 0.85rem; padding: 10px 0; background: var(--text-dark); border-color: var(--text-dark);">Go to Admin Dashboard</a>
+                    <% } else { %>
+                        <a href="/admin-login.php" class="btn btn-secondary" style="width: 100%; text-align: center; font-size: 0.85rem; padding: 10px 0; border-color: var(--border); color: var(--text-dark);"><i class="fa-solid fa-lock"></i> Staff Access</a>
+                    <% } %>
+                </div>
+            </div>
+
         </div>
     </section>
 
     <!-- Search Section -->
-    <div class="container" style="margin-top: -60px; position: relative; z-index: 10;">
-        <div class="search-container" style="box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div class="container" style="margin-top: 10px; margin-bottom: 30px;">
+        <div class="search-container" style="box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border); max-width: 900px; margin: 0 auto; padding: 20px;">
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-magnifying-glass" style="color: var(--primary);"></i> Search Public Directory
+            </h3>
             <form action="/browse" method="GET" class="search-form">
-                <input type="text" name="search" class="form-control" placeholder="Search item keywords (e.g. key, red bag)...">
+                <input type="text" name="search" class="form-control" placeholder="Search keywords (e.g. key, red bag)...">
                 
                 <select name="status" class="form-control">
                     <option value="">All Statuses</option>
@@ -24,7 +72,7 @@
                     <option value="found">Found Only</option>
                 </select>
                 
-                <input type="text" name="location" class="form-control" placeholder="Search by location...">
+                <input type="text" name="location" class="form-control" placeholder="Search location...">
                 
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
             </form>
@@ -32,18 +80,10 @@
     </div>
 
     <!-- Recent Listings Section -->
-    <section class="container" style="padding: 40px 0 60px;">
-        <h2 class="section-title">Recently Reported Items</h2>
+    <section class="container" style="padding: 30px 0 60px;">
+        <h2 class="section-title" style="font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 25px;">Recently Reported Items</h2>
         
-        <% if (dbOffline) { %>
-            <div class="alert alert-warning" style="padding: 30px; text-align: center; flex-direction: column;">
-                <i class="fa-solid fa-database" style="font-size: 3rem; color: var(--warning); margin-bottom: 10px;"></i>
-                <h4 style="font-size: 1.2rem;">Database Offline Mode</h4>
-                <p style="margin-top: 5px; color: var(--text-muted);">
-                    The local database is currently offline or unconfigured. You can run the application, edit files, and test views. Configure your MySQL credentials in `.env` to load live items!
-                </p>
-            </div>
-        <% } else if (items.length > 0) { %>
+        <% if (items && items.length > 0) { %>
             <div class="item-grid">
                 <% items.forEach(item => { %>
                     <div class="item-card">
@@ -71,11 +111,11 @@
                 <% }); %>
             </div>
             
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="/browse" class="btn btn-secondary"><i class="fa-solid fa-list-ul"></i> Browse All Reported Items</a>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="/browse" class="btn btn-secondary" style="border-color: var(--border); color: var(--text-dark);"><i class="fa-solid fa-list-ul"></i> Browse All Reported Items</a>
             </div>
         <% } else { %>
-            <div style="text-align: center; padding: 50px 0; color: var(--text-muted); border: 1px dashed var(--border); border-radius: var(--radius); background-color: var(--surface);">
+            <div style="text-align: center; padding: 50px 0; color: var(--text-muted); border: 1px dashed var(--border); border-radius: var(--radius); background-color: var(--surface); max-width: 900px; margin: 0 auto;">
                 <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;"></i>
                 <p>No listings registered yet. Be the first to file a report!</p>
             </div>
@@ -83,4 +123,3 @@
     </section>
 
 <%- include('layouts/footer') %>
-
