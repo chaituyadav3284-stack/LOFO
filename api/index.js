@@ -1,4 +1,4 @@
-﻿// api/index.js - LOFO Main Entrypoint (Vercel Serverless compatible)
+// api/index.js - LOFO Main Entrypoint (Vercel Serverless compatible)
 const express = require('express');
 const session = require('express-session');
 const path = require('path');

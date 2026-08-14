@@ -1,4 +1,4 @@
-﻿# LOFO - Campus Lost & Found Web Portal
+# LOFO - Campus Lost & Found Web Portal
 
 LOFO is a clean, minimal, and secure Lost & Found web portal developed for college final year projects. It is built on a **Node.js + Express.js** backend, rendering dynamic **EJS** template pages on the server and using a **MySQL** database.
 

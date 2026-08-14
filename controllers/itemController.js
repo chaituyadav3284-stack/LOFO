@@ -1,4 +1,4 @@
-﻿// controllers/itemController.js
+// controllers/itemController.js
 const db = require('../config/db');
 const cloudinaryConf = require('../config/cloudinary');
 const similarity = require('../services/similarity');

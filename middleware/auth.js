@@ -1,4 +1,4 @@
-﻿// middleware/auth.js
+// middleware/auth.js
 
 // Protect user routes
 function requireUser(req, res, next) {

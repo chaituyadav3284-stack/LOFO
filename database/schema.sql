@@ -1,4 +1,4 @@
-﻿-- Database creation script for LOFO
+-- Database creation script for LOFO
 
 CREATE DATABASE IF NOT EXISTS lofo_db;
 USE lofo_db;

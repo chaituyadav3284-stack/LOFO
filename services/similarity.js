@@ -1,4 +1,4 @@
-﻿// services/similarity.js
+// services/similarity.js
 const fs = require('fs');
 const path = require('path');
 
